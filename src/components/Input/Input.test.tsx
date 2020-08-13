@@ -1,37 +1,38 @@
 import React from 'react';
-import { mount } from 'enzyme';
+import {mount, ReactWrapper} from 'enzyme';
 import Input from './Input';
+import {InputProps} from './Input'
+import icon from '../../assets/email_icon.png'
 
-describe('asd', () => {
-    let setup: any;
+describe('InputField', () => {
+
+    let component: ReactWrapper;
+    let setup: InputProps;
+    const onChangeHandler: () => void = jest.fn();
 
     beforeEach(() => {
-        setup = (propsOverride?: any) => {
-            const onChange = jest.fn();
+        setup = {
+            name: 'name',
+            type: 'text',
+            placeholder: 'placeholder',
+            icon: icon,
+            onChange: onChangeHandler
+        }
 
-            const props = {
-                name: 'input',
-                type: 'text',
-                placeholder: 'super plejsholder',
-                onChange,
-                ...propsOverride,
-            };
-
-            // @ts-ignore
-            // eslint-disable-next-line react/jsx-props-no-spreading
-            const component = mount(<Input {...props} />);
-
-            return {
-                wrapper: component,
-            };
-        };
-    });
+        component = mount(<Input {...setup} />)
+    })
 
     it('onChange work correctly', () => {
-        const { wrapper } = setup();
-        // const fakeValue = 'fake value';
-        console.log(wrapper.debug());
-        // render.find(input).simulate('change', { target: { value: fakeValue } });
-        // expect(render.find(<InputField />).props().value).toEqual(fakeValue);
+        const fakeValue = 'fake value';
+        const input = component.find('input');
+
+        input.simulate('change')
+        input.getDOMNode<HTMLInputElement>().value = fakeValue;
+        expect(setup.onChange).toHaveBeenCalledTimes(1);
+        expect(component.find('input').getDOMNode<HTMLInputElement>().value).toEqual(fakeValue);
     });
+
+    it('icon shows correctly', () => {
+        expect(component.prop('icon')).toEqual(icon)
+    })
 });
