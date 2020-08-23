@@ -1,34 +1,62 @@
-import React, { FunctionComponent } from 'react';
-import { Wrapper, InputContainer, InputField, Label, Icon } from './StyledComponents';
+import React, { FunctionComponent, useState } from 'react';
+import {
+  Wrapper,
+  InputContainer,
+  InputField,
+  Label,
+  Icon,
+} from './StyledComponents';
 
 export interface InputProps {
-    name: string;
-    type: 'password' | 'text';
-    placeholder: string;
-    icon?: string;
-    onChange: (value: string) => void;
+  name?: string;
+  type: 'password' | 'text';
+  placeholder: string;
+  icon?: string;
+  value?: string;
+  disabled?: boolean;
+  onChange?: (value: string) => void;
 }
 
-const Input: FunctionComponent<InputProps> = ({ name, type, placeholder, icon, onChange }) => {
-    const onChangeHandler = (e: React.FormEvent<HTMLInputElement>): void => {
-        onChange(e.currentTarget.value);
-    };
+const Input: FunctionComponent<InputProps> = ({
+  name,
+  type,
+  placeholder,
+  icon,
+  value,
+  onChange,
+  disabled,
+}) => {
+  const [inputValue, setInputValue] = useState<string>(value as string);
+  const onChangeHandler = (e: React.FormEvent<HTMLInputElement>): void => {
+    setInputValue(e.currentTarget.value);
 
-    return (
-        <Wrapper>
-            <InputContainer>
-                {icon ? <Icon src={icon} /> : null}
-                <Label htmlFor={name}>
-                    <InputField
-                        type={type}
-                        name={name}
-                        placeholder={placeholder}
-                        onChange={onChangeHandler}
-                    />
-                </Label>
-            </InputContainer>
-        </Wrapper>
-    );
+    if (onChange) {
+      onChange(inputValue);
+    }
+  };
+
+  return (
+    <Wrapper>
+      <InputContainer>
+        {icon ? <Icon src={icon} data-testid="icon" /> : null}
+        <Label htmlFor={name}>
+          <InputField
+            value={value}
+            type={type}
+            name={name}
+            placeholder={placeholder}
+            onChange={onChangeHandler}
+            disabled={disabled}
+            data-testid="content-input"
+          />
+        </Label>
+      </InputContainer>
+    </Wrapper>
+  );
 };
 
+Input.defaultProps = {
+  value: '',
+  disabled: false,
+};
 export default Input;

@@ -1,38 +1,42 @@
+import '@testing-library/jest-dom/extend-expect';
 import React from 'react';
-import {mount, ReactWrapper} from 'enzyme';
 import Input from './Input';
-import {InputProps} from './Input'
-import icon from '../../assets/email_icon.png'
+import icon from '../../assets/email_icon.png';
+import { render, fireEvent } from '@testing-library/react';
+import { InputProps } from './Input';
 
 describe('InputField', () => {
+  const onChange = jest.fn();
+  const props: InputProps = {
+    name: 'name',
+    type: 'text',
+    placeholder: 'asd',
+    icon: icon,
+    onChange: onChange,
+  };
 
-    let component: ReactWrapper;
-    let setup: InputProps;
-    const onChangeHandler: () => void = jest.fn();
+  it('Should invoke onChangeHandler', () => {
+    const { getByTestId } = render(<Input {...props} />);
+    const input = getByTestId('content-input');
+    fireEvent.change(input, { target: { value: 'testValue' } });
+    expect(props.onChange).toHaveBeenCalledTimes(1);
+  });
 
-    beforeEach(() => {
-        setup = {
-            name: 'name',
-            type: 'text',
-            placeholder: 'placeholder',
-            icon: icon,
-            onChange: onChangeHandler
-        }
+  it('Icon renders when added in props', () => {
+    const { getByTestId } = render(<Input {...props} />);
+    const icon = getByTestId('icon');
+    expect(icon).toBeTruthy();
+  });
 
-        component = mount(<Input {...setup} />)
-    })
+  it('Icon not renders when icon props is empty', () => {
+    const { queryByLabelText } = render(<Input {...props} icon={''} />);
+    expect(queryByLabelText('icon')).toBeNull();
+  });
 
-    it('onChange work correctly', () => {
-        const fakeValue = 'fake value';
-        const input = component.find('input');
-
-        input.simulate('change')
-        input.getDOMNode<HTMLInputElement>().value = fakeValue;
-        expect(setup.onChange).toHaveBeenCalledTimes(1);
-        expect(component.find('input').getDOMNode<HTMLInputElement>().value).toEqual(fakeValue);
-    });
-
-    it('icon shows correctly', () => {
-        expect(component.prop('icon')).toEqual(icon)
-    })
+  it('Input should be disabled', () => {
+    const { getByTestId } = render(<Input {...props} disabled={true} />);
+    const input = getByTestId('content-input') as HTMLInputElement;
+    fireEvent.change(input, { target: { value: 'testValue' } });
+    expect(input.value).toBe('');
+  });
 });
