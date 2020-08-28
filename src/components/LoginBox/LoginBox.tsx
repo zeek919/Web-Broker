@@ -3,6 +3,7 @@ import Input from '../Input/Input';
 import { Wrapper, TextWrapper, Header, Note } from './StyledComponents';
 import email from '../../assets/email_icon.png';
 import password from '../../assets/password_icon.png';
+import SocialMediaLoginBox from '../SocialMediaLoginBox/SocialMediaLoginBox';
 import Button from '../Button/Button';
 
 const LoginBox: FunctionComponent = () => (
@@ -33,7 +34,10 @@ const LoginBox: FunctionComponent = () => (
       firstGradientColor={'2578A7'}
       secondGradientColor={'28BFA9'}
       shadowColor={'72EFDD'}
+      radius={10}
+      color={'white'}
     />
+    <SocialMediaLoginBox />
   </Wrapper>
 );
 
